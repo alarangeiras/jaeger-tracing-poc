@@ -1,0 +1,46 @@
+version: '3.7'
+services:
+  first-service:
+    build:
+      context: example-service/
+    ports:
+      - 3001:3000
+    environment: 
+      - PORT=3000
+      - NEXT_SERVICE_HOST=second-service
+      - NEXT_SERVICE_PORT=3000
+    networks:
+      - jaeger-example
+
+  second-service:
+    build:
+      context: example-service/
+    ports:
+      - 3002:3000
+    environment: 
+      - PORT=3000
+      - NEXT_SERVICE_HOST=third-service
+      - NEXT_SERVICE_PORT=3000
+    networks:
+      - jaeger-example
+
+  third-service:
+    build:
+      context: example-service/
+    ports:
+      - 3003:3000
+    environment: 
+      - PORT=3000
+    networks:
+      - jaeger-example
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    networks:
+      - jaeger-example
+
+networks:
+  jaeger-example:
